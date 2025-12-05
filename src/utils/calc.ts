@@ -221,7 +221,14 @@ export const formatNumber = (num: number): string => {
   const maxDecimals = 10;
   const rounded = Math.round(num * Math.pow(10, maxDecimals)) / Math.pow(10, maxDecimals);
   
-  // Remove zeros desnecessários no final
-  return rounded.toString().replace(/\.?0+$/, '');
+  // Converte para string
+  let result = rounded.toString();
+  
+  // Remove zeros desnecessários apenas após ponto decimal
+  if (result.includes('.')) {
+    result = result.replace(/\.?0+$/, '');
+  }
+  
+  return result;
 };
 
