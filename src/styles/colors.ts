@@ -1,9 +1,9 @@
 /**
  * Tema de cores do aplicativo
- * Cores modernas e equilibradas para a calculadora
+ * Cores modernas e sofisticadas inspiradas em Apple Calculator + Fluent Design
  */
 export const colors = {
-  // Cores primárias
+  // Cores primárias (Apple Blue + Fluent Blue)
   primary: '#007AFF',
   primaryDark: '#0051D5',
   primaryLight: '#5AC8FA',
@@ -13,9 +13,9 @@ export const colors = {
   secondaryDark: '#3634A3',
   secondaryLight: '#AF52DE',
   
-  // Cores de fundo
-  background: '#1C1C1E',
-  backgroundLight: '#2C2C2E',
+  // Cores de fundo (Dark Mode - Apple inspired)
+  background: '#000000',
+  backgroundLight: '#1C1C1E',
   backgroundDark: '#000000',
   surface: '#1C1C1E',
   surfaceLight: '#2C2C2E',
@@ -23,7 +23,7 @@ export const colors = {
   
   // Cores de texto
   text: '#FFFFFF',
-  textSecondary: '#8E8E93',
+  textSecondary: '#AEAEB2',
   textTertiary: '#636366',
   textLight: '#FFFFFF',
   textDark: '#1C1C1E',
@@ -39,15 +39,20 @@ export const colors = {
   borderLight: '#48484A',
   borderDark: '#1C1C1E',
   
-  // Cores de botão da calculadora (tema escuro moderno)
+  // Cores de botão da calculadora (Dark Mode - Apple Calculator inspired)
+  // Números: cinza escuro elegante
   buttonNumber: '#2C2C2E',
   buttonNumberPressed: '#3A3A3C',
+  // Operadores: laranja vibrante
   buttonOperator: '#FF9500',
-  buttonOperatorPressed: '#FFAD33',
+  buttonOperatorPressed: '#FFB340',
+  // Ações: cinza médio
   buttonAction: '#48484A',
-  buttonActionPressed: '#636366',
+  buttonActionPressed: '#5E5E62',
+  // Igual: laranja vibrante (destaque)
   buttonEquals: '#FF9500',
-  buttonEqualsPressed: '#FFAD33',
+  buttonEqualsPressed: '#FFB340',
+  // Texto dos botões
   buttonText: '#FFFFFF',
   buttonTextLight: '#FFFFFF',
   buttonTextDark: '#1C1C1E',

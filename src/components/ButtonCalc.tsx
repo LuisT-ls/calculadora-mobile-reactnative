@@ -1,6 +1,14 @@
-import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { shadows, borderRadius, spacing } from '../styles/global';
+import React, { useRef } from 'react';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+  Animated,
+  Platform,
+} from 'react-native';
+import { modernShadows, modernBorderRadius, modernTypography, modernLayout, modernAnimations } from '../styles/modern';
 import type { Theme } from '../styles/theme';
 
 /**
@@ -20,7 +28,7 @@ interface ButtonCalcProps {
 }
 
 /**
- * Componente de botão da calculadora com design moderno e suporte a temas
+ * Componente de botão da calculadora com design moderno, animações e suporte a temas
  * 
  * @param label - Texto exibido no botão
  * @param onPress - Função chamada ao pressionar o botão
@@ -35,21 +43,56 @@ export const ButtonCalc: React.FC<ButtonCalcProps> = ({
   flex = 1,
   theme,
 }) => {
-  // Determina o estilo do botão baseado no tipo
+  // Animação de escala para feedback tátil
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  /**
+   * Animação de press (escala para 0.96)
+   */
+  const handlePressIn = (): void => {
+    Animated.spring(scaleAnim, {
+      toValue: modernAnimations.pressScale,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 0,
+    }).start();
+  };
+
+  /**
+   * Animação de release (volta para 1)
+   */
+  const handlePressOut = (): void => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 0,
+    }).start();
+  };
+
+  /**
+   * Determina o estilo do botão baseado no tipo
+   */
   const getButtonStyle = (): ViewStyle => {
+    const baseStyle: ViewStyle = {
+      backgroundColor: theme.buttonNumber,
+    };
+
     switch (type) {
       case 'operator':
-        return { backgroundColor: theme.buttonOperator };
+        return { ...baseStyle, backgroundColor: theme.buttonOperator };
       case 'action':
-        return { backgroundColor: theme.buttonAction };
+        return { ...baseStyle, backgroundColor: theme.buttonAction };
       case 'equals':
-        return { backgroundColor: theme.buttonEquals };
+        return { ...baseStyle, backgroundColor: theme.buttonEquals };
       default:
-        return { backgroundColor: theme.buttonNumber };
+        return baseStyle;
     }
   };
 
-  // Determina o estilo do texto baseado no tipo
+  /**
+   * Determina o estilo do texto baseado no tipo
+   */
   const getTextStyle = (): TextStyle => {
     switch (type) {
       case 'operator':
@@ -63,27 +106,46 @@ export const ButtonCalc: React.FC<ButtonCalcProps> = ({
   };
 
   return (
-    <TouchableOpacity
-      style={[styles.button, getButtonStyle(), { flex }]}
-      onPress={onPress}
-      activeOpacity={0.8}
+    <Animated.View
+      style={[
+        styles.buttonContainer,
+        { flex },
+        { transform: [{ scale: scaleAnim }] },
+      ]}
     >
-      <Text style={[styles.buttonLabel, getTextStyle()]}>{label}</Text>
-    </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.button, getButtonStyle()]}
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={1}
+      >
+        <Text style={[styles.buttonLabel, getTextStyle()]}>{label}</Text>
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    marginHorizontal: modernLayout.buttonGap / 2,
+    marginVertical: modernLayout.buttonGap / 2,
+  },
   button: {
-    margin: spacing.sm,
-    borderRadius: borderRadius.large,
+    borderRadius: modernBorderRadius.large,
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: 80,
-    ...shadows.medium,
+    height: modernLayout.buttonHeight,
+    ...modernShadows.medium,
+    ...Platform.select({
+      web: {
+        cursor: 'pointer',
+        userSelect: 'none',
+        transition: 'all 0.2s ease',
+      },
+    }),
   },
   buttonLabel: {
-    fontSize: 28,
-    fontWeight: '600',
+    ...modernTypography.button,
   },
 });
