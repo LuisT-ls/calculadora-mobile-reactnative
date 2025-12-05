@@ -1,11 +1,12 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { colors } from '../styles/colors';
+import { shadows, borderRadius, spacing } from '../styles/global';
 
 /**
  * Tipos de botão da calculadora
  */
-export type ButtonType = 'number' | 'operator' | 'function' | 'equals';
+export type ButtonType = 'number' | 'operator' | 'action' | 'equals';
 
 /**
  * Props do componente ButtonCalc
@@ -18,11 +19,11 @@ interface ButtonCalcProps {
 }
 
 /**
- * Componente de botão da calculadora
+ * Componente de botão da calculadora com design moderno
  * 
  * @param label - Texto exibido no botão
  * @param onPress - Função chamada ao pressionar o botão
- * @param type - Tipo do botão (number, operator, function, equals)
+ * @param type - Tipo do botão (number, operator, action, equals)
  * @param flex - Valor flex para ajustar largura (padrão: 1)
  */
 export const ButtonCalc: React.FC<ButtonCalcProps> = ({
@@ -36,8 +37,8 @@ export const ButtonCalc: React.FC<ButtonCalcProps> = ({
     switch (type) {
       case 'operator':
         return styles.buttonOperator;
-      case 'function':
-        return styles.buttonFunction;
+      case 'action':
+        return styles.buttonAction;
       case 'equals':
         return styles.buttonEquals;
       default:
@@ -51,6 +52,8 @@ export const ButtonCalc: React.FC<ButtonCalcProps> = ({
       case 'operator':
       case 'equals':
         return styles.buttonTextLight;
+      case 'action':
+        return styles.buttonTextLight;
       default:
         return styles.buttonText;
     }
@@ -60,7 +63,7 @@ export const ButtonCalc: React.FC<ButtonCalcProps> = ({
     <TouchableOpacity
       style={[styles.button, getButtonStyle(), { flex }]}
       onPress={onPress}
-      activeOpacity={0.7}
+      activeOpacity={0.8}
     >
       <Text style={[styles.buttonLabel, getTextStyle()]}>{label}</Text>
     </TouchableOpacity>
@@ -69,19 +72,12 @@ export const ButtonCalc: React.FC<ButtonCalcProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    margin: 8,
-    borderRadius: 12,
+    margin: spacing.sm,
+    borderRadius: borderRadius.large,
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: 80,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    ...shadows.medium,
   },
   buttonNumber: {
     backgroundColor: colors.buttonNumber,
@@ -89,11 +85,11 @@ const styles = StyleSheet.create({
   buttonOperator: {
     backgroundColor: colors.buttonOperator,
   },
-  buttonFunction: {
-    backgroundColor: colors.buttonFunction,
+  buttonAction: {
+    backgroundColor: colors.buttonAction,
   },
   buttonEquals: {
-    backgroundColor: colors.buttonOperator,
+    backgroundColor: colors.buttonEquals,
   },
   buttonLabel: {
     fontSize: 28,
@@ -106,4 +102,3 @@ const styles = StyleSheet.create({
     color: colors.buttonTextLight,
   },
 });
-

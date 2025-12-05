@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { colors } from '../styles/colors';
+import { shadows, borderRadius, spacing, typography } from '../styles/global';
 import { ButtonCalc, ButtonType } from '../components/ButtonCalc';
 import { calculate, canAddOperator, formatNumber } from '../utils/calc';
 
 /**
- * Tela principal da calculadora
+ * Tela principal da calculadora com design moderno
  */
 export const CalculatorScreen: React.FC = () => {
   // Estado para armazenar a expressão completa digitada
@@ -120,7 +121,7 @@ export const CalculatorScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       
       {/* Display da calculadora */}
       <View style={styles.displayContainer}>
@@ -166,7 +167,7 @@ export const CalculatorScreen: React.FC = () => {
 
         {/* Linha 4: C, 0, =, + */}
         <View style={styles.buttonRow}>
-          {renderButton('C', handleClear, 'function')}
+          {renderButton('C', handleClear, 'action')}
           {renderButton('0', () => handleNumber('0'))}
           {renderButton('=', handleEquals, 'equals')}
           {renderButton('+', () => handleOperator('+'), 'operator')}
@@ -184,48 +185,42 @@ const styles = StyleSheet.create({
   displayContainer: {
     flex: 0.4,
     justifyContent: 'flex-end',
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xl,
   },
   display: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 24,
-    minHeight: 120,
+    borderRadius: borderRadius.xlarge,
+    padding: spacing.xxxl,
+    minHeight: 140,
     justifyContent: 'flex-end',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadows.large,
   },
   expression: {
-    fontSize: 48,
-    fontWeight: '300',
-    color: colors.text,
+    ...typography.display,
+    fontSize: 42,
     textAlign: 'right',
-    marginBottom: 8,
+    marginBottom: spacing.md,
     minHeight: 56,
   },
   result: {
-    fontSize: 32,
-    fontWeight: '600',
-    color: colors.textSecondary,
+    ...typography.heading,
+    fontSize: 28,
     textAlign: 'right',
+    color: colors.textSecondary,
     minHeight: 40,
   },
   buttonsContainer: {
     flex: 0.6,
-    paddingHorizontal: 12,
-    paddingBottom: 20,
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.xl,
     justifyContent: 'center',
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 4,
+    marginVertical: spacing.xs,
   },
 });

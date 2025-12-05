@@ -1,5 +1,6 @@
 /**
  * Tema de cores do aplicativo
+ * Cores modernas e equilibradas para a calculadora
  */
 export const colors = {
   // Cores primárias
@@ -13,14 +14,17 @@ export const colors = {
   secondaryLight: '#AF52DE',
   
   // Cores de fundo
-  background: '#F2F2F7',
+  background: '#1C1C1E',
+  backgroundLight: '#2C2C2E',
   backgroundDark: '#000000',
-  surface: '#FFFFFF',
-  surfaceDark: '#1C1C1E',
+  surface: '#1C1C1E',
+  surfaceLight: '#2C2C2E',
+  surfaceDark: '#000000',
   
   // Cores de texto
-  text: '#000000',
+  text: '#FFFFFF',
   textSecondary: '#8E8E93',
+  textTertiary: '#636366',
   textLight: '#FFFFFF',
   textDark: '#1C1C1E',
   
@@ -31,16 +35,22 @@ export const colors = {
   info: '#007AFF',
   
   // Cores de borda
-  border: '#C6C6C8',
-  borderLight: '#E5E5EA',
-  borderDark: '#38383A',
+  border: '#38383A',
+  borderLight: '#48484A',
+  borderDark: '#1C1C1E',
   
-  // Cores de botão da calculadora
-  buttonNumber: '#FFFFFF',
+  // Cores de botão da calculadora (tema escuro moderno)
+  buttonNumber: '#2C2C2E',
+  buttonNumberPressed: '#3A3A3C',
   buttonOperator: '#FF9500',
-  buttonFunction: '#D4D4D2',
-  buttonText: '#000000',
+  buttonOperatorPressed: '#FFAD33',
+  buttonAction: '#48484A',
+  buttonActionPressed: '#636366',
+  buttonEquals: '#FF9500',
+  buttonEqualsPressed: '#FFAD33',
+  buttonText: '#FFFFFF',
   buttonTextLight: '#FFFFFF',
+  buttonTextDark: '#1C1C1E',
 } as const;
 
 export type Colors = typeof colors;
