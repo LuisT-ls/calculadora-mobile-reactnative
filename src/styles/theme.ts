@@ -153,11 +153,14 @@ export interface Theme {
 
 /**
  * Retorna o tema baseado no esquema de cores do sistema
+ * Por padrão, retorna o tema escuro
  * 
  * @param colorScheme - Esquema de cores ('light' | 'dark' | null)
- * @returns Tema correspondente
+ * @returns Tema correspondente (padrão: dark)
  */
 export const getTheme = (colorScheme: 'light' | 'dark' | null | undefined): Theme => {
-  return colorScheme === 'dark' ? darkTheme : lightTheme;
+  // Se o sistema está em modo claro, usa lightTheme
+  // Caso contrário (dark, null ou undefined), usa darkTheme por padrão
+  return colorScheme === 'light' ? lightTheme : darkTheme;
 };
 

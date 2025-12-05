@@ -13,8 +13,11 @@ export const CalculatorScreen: React.FC = () => {
   // Detecta o esquema de cores do sistema
   const colorScheme = useColorScheme();
   
-  // Obtém o tema baseado no esquema de cores
+  // Obtém o tema baseado no esquema de cores (padrão: dark)
   const theme = useMemo(() => getTheme(colorScheme), [colorScheme]);
+  
+  // Determina o estilo da StatusBar (inverte: dark mode = light bar, light mode = dark bar)
+  const statusBarStyle = colorScheme === 'light' ? 'dark' : 'light';
   
   // Estado para armazenar a expressão completa digitada
   const [expression, setExpression] = useState<string>('0');
@@ -145,7 +148,7 @@ export const CalculatorScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={[styles.container, dynamicStyles.container]}>
-      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+      <StatusBar style={statusBarStyle} />
       
       {/* Display da calculadora */}
       <View style={styles.displayContainer}>
