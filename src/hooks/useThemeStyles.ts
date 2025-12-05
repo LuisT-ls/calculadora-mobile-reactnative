@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ViewStyle, TextStyle } from 'react-native';
+import { ViewStyle, TextStyle, Platform } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 import { modernBorderRadius } from '../styles/modern';
 
@@ -49,6 +49,12 @@ export const useThemeStyles = (): ThemeStyles => {
         backgroundColor: theme.backgroundSecondary,
         borderRadius: modernBorderRadius.large,
         ...theme.shadowDark,
+        ...Platform.select({
+          web: {
+            borderRadius: `${modernBorderRadius.large}px`,
+            overflow: 'hidden',
+          },
+        }),
       },
       buttonsContainer: {
         backgroundColor: theme.backgroundPrimary,
@@ -73,21 +79,45 @@ export const useThemeStyles = (): ThemeStyles => {
         backgroundColor: theme.buttonPrimary,
         borderRadius: modernBorderRadius.large,
         ...theme.shadowLight,
+        ...Platform.select({
+          web: {
+            borderRadius: `${modernBorderRadius.large}px`,
+            overflow: 'hidden',
+          },
+        }),
       },
       buttonOperator: {
         backgroundColor: theme.operatorButton,
         borderRadius: modernBorderRadius.large,
         ...theme.shadowLight,
+        ...Platform.select({
+          web: {
+            borderRadius: `${modernBorderRadius.large}px`,
+            overflow: 'hidden',
+          },
+        }),
       },
       buttonAction: {
         backgroundColor: theme.buttonSecondary,
         borderRadius: modernBorderRadius.large,
         ...theme.shadowLight,
+        ...Platform.select({
+          web: {
+            borderRadius: `${modernBorderRadius.large}px`,
+            overflow: 'hidden',
+          },
+        }),
       },
       buttonEquals: {
         backgroundColor: theme.operatorButton,
         borderRadius: modernBorderRadius.large,
         ...theme.shadowLight,
+        ...Platform.select({
+          web: {
+            borderRadius: `${modernBorderRadius.large}px`,
+            overflow: 'hidden',
+          },
+        }),
       },
       buttonText: {
         color: theme.textPrimary,

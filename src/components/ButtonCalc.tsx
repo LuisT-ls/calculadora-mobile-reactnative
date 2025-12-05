@@ -1,16 +1,17 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import {
   TouchableOpacity,
   Text,
   StyleSheet,
   ViewStyle,
   TextStyle,
-  Animated,
   Platform,
+  Animated,
 } from 'react-native';
-import { modernBorderRadius, modernTypography, modernLayout, modernAnimations } from '../styles/modern';
+import { modernTypography, modernLayout } from '../styles/modern';
 import { useTheme } from '../contexts/ThemeContext';
 import { useThemeStyles } from '../hooks/useThemeStyles';
+import { usePressScaleAnimation } from '../animations';
 
 /**
  * Tipos de botão da calculadora
@@ -45,32 +46,8 @@ export const ButtonCalc: React.FC<ButtonCalcProps> = ({
   const { theme } = useTheme();
   const themeStyles = useThemeStyles();
   
-  // Animação de escala para feedback tátil
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-
-  /**
-   * Animação de press (escala para 0.96)
-   */
-  const handlePressIn = (): void => {
-    Animated.spring(scaleAnim, {
-      toValue: modernAnimations.pressScale,
-      useNativeDriver: true,
-      speed: 20,
-      bounciness: 0,
-    }).start();
-  };
-
-  /**
-   * Animação de release (volta para 1)
-   */
-  const handlePressOut = (): void => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 20,
-      bounciness: 0,
-    }).start();
-  };
+  // Animação de escala suave usando react-native-reanimated
+  const { animatedStyle: scaleAnimatedStyle, handlePressIn, handlePressOut } = usePressScaleAnimation();
 
   /**
    * Determina o estilo do botão baseado no tipo
@@ -122,8 +99,11 @@ export const ButtonCalc: React.FC<ButtonCalcProps> = ({
     <Animated.View
       style={[
         styles.buttonContainer,
-        { flex },
-        { transform: [{ scale: scaleAnim }] },
+        Platform.select({
+          web: { flex: 1, minWidth: 0 },
+          default: { flex },
+        }),
+        scaleAnimatedStyle,
       ]}
     >
       <TouchableOpacity
@@ -141,8 +121,18 @@ export const ButtonCalc: React.FC<ButtonCalcProps> = ({
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    marginHorizontal: modernLayout.buttonGap / 2,
-    marginVertical: modernLayout.buttonGap / 2,
+    ...Platform.select({
+      web: {
+        flex: 1,
+        minWidth: 0,
+        display: 'inline-flex',
+      },
+      default: {
+        marginHorizontal: modernLayout.buttonGap / 2,
+        marginVertical: modernLayout.buttonGap / 2,
+        flex: 1,
+      },
+    }),
   },
   button: {
     justifyContent: 'center',
@@ -150,11 +140,17 @@ const styles = StyleSheet.create({
     height: modernLayout.buttonHeight,
     ...Platform.select({
       web: {
+        width: '100%',
         cursor: 'pointer',
         userSelect: 'none',
+        WebkitUserSelect: 'none',
         transition: 'all 0.2s ease',
+        WebkitTapHighlightColor: 'transparent',
+        touchAction: 'manipulation',
         // Efeito glass-like para dark mode na web
         border: '1px solid transparent',
+        boxSizing: 'border-box',
+        overflow: 'hidden',
       },
     }),
   },

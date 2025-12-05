@@ -5,10 +5,10 @@ import {
   StyleSheet,
   SafeAreaView,
   Platform,
+  Animated,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import {
-  modernBorderRadius,
   modernSpacing,
   modernTypography,
   modernLayout,
@@ -17,6 +17,10 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useThemeStyles } from '../hooks/useThemeStyles';
 import { ButtonCalc, ButtonType } from '../components/ButtonCalc';
 import { calculate, canAddOperator, formatNumber } from '../utils/calc';
+import { useFadeTranslateAnimation, useFadeInAnimation } from '../animations';
+
+const AnimatedText = Animated.createAnimatedComponent(Text);
+const AnimatedView = Animated.createAnimatedComponent(View);
 
 /**
  * Tela principal da calculadora com design moderno e suporte a dark mode
@@ -35,6 +39,13 @@ export const CalculatorScreen: React.FC = () => {
   const [expression, setExpression] = useState<string>('0');
   // Estado para armazenar o resultado calculado
   const [result, setResult] = useState<string>('');
+  
+  // Animação de fadeIn inicial para a tela
+  const containerFadeIn = useFadeInAnimation(100);
+  
+  // Animação para o display quando o valor muda (trigger baseado em expression e result)
+  const displayTrigger = `${expression}-${result}`;
+  const displayAnimatedStyle = useFadeTranslateAnimation(displayTrigger);
 
   /**
    * Limpa completamente a calculadora
@@ -154,73 +165,75 @@ export const CalculatorScreen: React.FC = () => {
   ];
 
   return (
-    <SafeAreaView style={[styles.container, themeStyles.container]}>
-      <StatusBar style={statusBarStyle} />
-      
-      {/* Container principal com centralização para web */}
-      <View style={styles.mainContainer}>
-        {/* Display da calculadora */}
-        <View style={[styles.displayContainer, themeStyles.displayContainer]}>
-          <View style={displayStyle}>
-            {/* Expressão completa digitada */}
-            <Text
-              style={[styles.expression, themeStyles.expression]}
-              numberOfLines={1}
-              adjustsFontSizeToFit
-              minimumFontScale={0.5}
-            >
-              {expression}
-            </Text>
-            {/* Resultado calculado */}
-            {result !== '' && (
-              <Text
-                style={[styles.result, themeStyles.result]}
+    <AnimatedView style={[styles.container, themeStyles.container, containerFadeIn]}>
+      <SafeAreaView style={StyleSheet.absoluteFill}>
+        <StatusBar style={statusBarStyle} />
+        
+        {/* Container principal com centralização para web */}
+        <View style={styles.mainContainer}>
+          {/* Display da calculadora */}
+          <View style={[styles.displayContainer, themeStyles.displayContainer]}>
+            <AnimatedView style={[displayStyle, displayAnimatedStyle]}>
+              {/* Expressão completa digitada */}
+              <AnimatedText
+                style={[styles.expression, themeStyles.expression]}
                 numberOfLines={1}
                 adjustsFontSizeToFit
                 minimumFontScale={0.5}
               >
-                = {result}
-              </Text>
-            )}
+                {expression}
+              </AnimatedText>
+              {/* Resultado calculado */}
+              {result !== '' && (
+                <AnimatedText
+                  style={[styles.result, themeStyles.result]}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.5}
+                >
+                  = {result}
+                </AnimatedText>
+              )}
+            </AnimatedView>
+          </View>
+
+          {/* Grade de botões */}
+          <View style={[styles.buttonsContainer, themeStyles.buttonsContainer]}>
+            {/* Linha 1: 7, 8, 9, ÷ */}
+            <View style={styles.buttonRow}>
+              {renderButton('7', () => handleNumber('7'))}
+              {renderButton('8', () => handleNumber('8'))}
+              {renderButton('9', () => handleNumber('9'))}
+              {renderButton('÷', () => handleOperator('/'), 'operator')}
+            </View>
+
+            {/* Linha 2: 4, 5, 6, × */}
+            <View style={styles.buttonRow}>
+              {renderButton('4', () => handleNumber('4'))}
+              {renderButton('5', () => handleNumber('5'))}
+              {renderButton('6', () => handleNumber('6'))}
+              {renderButton('×', () => handleOperator('*'), 'operator')}
+            </View>
+
+            {/* Linha 3: 1, 2, 3, - */}
+            <View style={styles.buttonRow}>
+              {renderButton('1', () => handleNumber('1'))}
+              {renderButton('2', () => handleNumber('2'))}
+              {renderButton('3', () => handleNumber('3'))}
+              {renderButton('-', () => handleOperator('-'), 'operator')}
+            </View>
+
+            {/* Linha 4: C, 0, =, + */}
+            <View style={styles.buttonRow}>
+              {renderButton('C', handleClear, 'action')}
+              {renderButton('0', () => handleNumber('0'))}
+              {renderButton('=', handleEquals, 'equals')}
+              {renderButton('+', () => handleOperator('+'), 'operator')}
+            </View>
           </View>
         </View>
-
-        {/* Grade de botões */}
-        <View style={[styles.buttonsContainer, themeStyles.buttonsContainer]}>
-          {/* Linha 1: 7, 8, 9, ÷ */}
-          <View style={styles.buttonRow}>
-            {renderButton('7', () => handleNumber('7'))}
-            {renderButton('8', () => handleNumber('8'))}
-            {renderButton('9', () => handleNumber('9'))}
-            {renderButton('÷', () => handleOperator('/'), 'operator')}
-          </View>
-
-          {/* Linha 2: 4, 5, 6, × */}
-          <View style={styles.buttonRow}>
-            {renderButton('4', () => handleNumber('4'))}
-            {renderButton('5', () => handleNumber('5'))}
-            {renderButton('6', () => handleNumber('6'))}
-            {renderButton('×', () => handleOperator('*'), 'operator')}
-          </View>
-
-          {/* Linha 3: 1, 2, 3, - */}
-          <View style={styles.buttonRow}>
-            {renderButton('1', () => handleNumber('1'))}
-            {renderButton('2', () => handleNumber('2'))}
-            {renderButton('3', () => handleNumber('3'))}
-            {renderButton('-', () => handleOperator('-'), 'operator')}
-          </View>
-
-          {/* Linha 4: C, 0, =, + */}
-          <View style={styles.buttonRow}>
-            {renderButton('C', handleClear, 'action')}
-            {renderButton('0', () => handleNumber('0'))}
-            {renderButton('=', handleEquals, 'equals')}
-            {renderButton('+', () => handleOperator('+'), 'operator')}
-          </View>
-        </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </AnimatedView>
   );
 };
 
@@ -229,9 +242,16 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Platform.select({
       web: {
+        display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
+        width: '100%',
+        padding: modernSpacing.xl,
+        boxSizing: 'border-box',
+      },
+      default: {
+        flexGrow: 1,
       },
     }),
   },
@@ -241,10 +261,15 @@ const styles = StyleSheet.create({
     ...Platform.select({
       web: {
         maxWidth: modernLayout.maxWidth,
-        marginHorizontal: 'auto',
-        paddingHorizontal: modernLayout.containerPadding,
+        width: '100%',
+        margin: '0 auto',
+        paddingHorizontal: modernSpacing.xl,
+        display: 'flex',
+        flexDirection: 'column',
+        boxSizing: 'border-box',
       },
       default: {
+        flexGrow: 1,
         paddingHorizontal: modernLayout.containerPadding,
       },
     }),
@@ -256,18 +281,22 @@ const styles = StyleSheet.create({
     ...Platform.select({
       web: {
         paddingTop: modernSpacing.xxxl,
+        width: '100%',
+        boxSizing: 'border-box',
       },
     }),
   },
   display: {
-    borderRadius: modernBorderRadius.large,
     paddingHorizontal: modernSpacing.xxl,
     paddingVertical: modernSpacing.xxxl,
     minHeight: modernLayout.displayMinHeight,
     justifyContent: 'flex-end',
     ...Platform.select({
       web: {
+        width: '100%',
+        boxSizing: 'border-box',
         backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
       },
     }),
   },
@@ -298,10 +327,23 @@ const styles = StyleSheet.create({
     paddingTop: modernSpacing.lg,
     paddingBottom: modernSpacing.xl,
     justifyContent: 'center',
+    ...Platform.select({
+      web: {
+        width: '100%',
+        boxSizing: 'border-box',
+      },
+    }),
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 0,
+    ...Platform.select({
+      web: {
+        width: '100%',
+        display: 'flex',
+        gap: modernLayout.buttonGap,
+      },
+    }),
   },
 });
