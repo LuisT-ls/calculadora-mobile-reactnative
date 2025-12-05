@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import { colors } from '../styles/colors';
 import { shadows, borderRadius, spacing } from '../styles/global';
+import type { Theme } from '../styles/theme';
 
 /**
  * Tipos de botão da calculadora
@@ -16,33 +16,36 @@ interface ButtonCalcProps {
   onPress: () => void;
   type?: ButtonType;
   flex?: number;
+  theme: Theme;
 }
 
 /**
- * Componente de botão da calculadora com design moderno
+ * Componente de botão da calculadora com design moderno e suporte a temas
  * 
  * @param label - Texto exibido no botão
  * @param onPress - Função chamada ao pressionar o botão
  * @param type - Tipo do botão (number, operator, action, equals)
  * @param flex - Valor flex para ajustar largura (padrão: 1)
+ * @param theme - Tema atual (light ou dark)
  */
 export const ButtonCalc: React.FC<ButtonCalcProps> = ({
   label,
   onPress,
   type = 'number',
   flex = 1,
+  theme,
 }) => {
   // Determina o estilo do botão baseado no tipo
   const getButtonStyle = (): ViewStyle => {
     switch (type) {
       case 'operator':
-        return styles.buttonOperator;
+        return { backgroundColor: theme.buttonOperator };
       case 'action':
-        return styles.buttonAction;
+        return { backgroundColor: theme.buttonAction };
       case 'equals':
-        return styles.buttonEquals;
+        return { backgroundColor: theme.buttonEquals };
       default:
-        return styles.buttonNumber;
+        return { backgroundColor: theme.buttonNumber };
     }
   };
 
@@ -51,11 +54,11 @@ export const ButtonCalc: React.FC<ButtonCalcProps> = ({
     switch (type) {
       case 'operator':
       case 'equals':
-        return styles.buttonTextLight;
+        return { color: theme.buttonTextLight };
       case 'action':
-        return styles.buttonTextLight;
+        return { color: theme.buttonTextLight };
       default:
-        return styles.buttonText;
+        return { color: theme.buttonText };
     }
   };
 
@@ -79,26 +82,8 @@ const styles = StyleSheet.create({
     minHeight: 80,
     ...shadows.medium,
   },
-  buttonNumber: {
-    backgroundColor: colors.buttonNumber,
-  },
-  buttonOperator: {
-    backgroundColor: colors.buttonOperator,
-  },
-  buttonAction: {
-    backgroundColor: colors.buttonAction,
-  },
-  buttonEquals: {
-    backgroundColor: colors.buttonEquals,
-  },
   buttonLabel: {
     fontSize: 28,
     fontWeight: '600',
-  },
-  buttonText: {
-    color: colors.buttonText,
-  },
-  buttonTextLight: {
-    color: colors.buttonTextLight,
   },
 });

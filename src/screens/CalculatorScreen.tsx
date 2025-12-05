@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, useColorScheme } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { colors } from '../styles/colors';
 import { shadows, borderRadius, spacing, typography } from '../styles/global';
+import { getTheme, type Theme } from '../styles/theme';
 import { ButtonCalc, ButtonType } from '../components/ButtonCalc';
 import { calculate, canAddOperator, formatNumber } from '../utils/calc';
 
 /**
- * Tela principal da calculadora com design moderno
+ * Tela principal da calculadora com design moderno e suporte a dark mode
  */
 export const CalculatorScreen: React.FC = () => {
+  // Detecta o esquema de cores do sistema
+  const colorScheme = useColorScheme();
+  
+  // Obtém o tema baseado no esquema de cores
+  const theme = useMemo(() => getTheme(colorScheme), [colorScheme]);
+  
   // Estado para armazenar a expressão completa digitada
   const [expression, setExpression] = useState<string>('0');
   // Estado para armazenar o resultado calculado
@@ -115,24 +121,42 @@ export const CalculatorScreen: React.FC = () => {
         onPress={onPress}
         type={type}
         flex={flex}
+        theme={theme}
       />
     );
   };
 
+  // Estilos dinâmicos baseados no tema
+  const dynamicStyles = useMemo(() => ({
+    container: {
+      backgroundColor: theme.background,
+    },
+    display: {
+      backgroundColor: theme.surface,
+      borderColor: theme.border,
+    },
+    expression: {
+      color: theme.text,
+    },
+    result: {
+      color: theme.textSecondary,
+    },
+  }), [theme]);
+
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
+    <SafeAreaView style={[styles.container, dynamicStyles.container]}>
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       
       {/* Display da calculadora */}
       <View style={styles.displayContainer}>
-        <View style={styles.display}>
+        <View style={[styles.display, dynamicStyles.display]}>
           {/* Expressão completa digitada */}
-          <Text style={styles.expression} numberOfLines={1} adjustsFontSizeToFit>
+          <Text style={[styles.expression, dynamicStyles.expression]} numberOfLines={1} adjustsFontSizeToFit>
             {expression}
           </Text>
           {/* Resultado calculado */}
           {result !== '' && (
-            <Text style={styles.result} numberOfLines={1} adjustsFontSizeToFit>
+            <Text style={[styles.result, dynamicStyles.result]} numberOfLines={1} adjustsFontSizeToFit>
               = {result}
             </Text>
           )}
@@ -180,7 +204,6 @@ export const CalculatorScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   displayContainer: {
     flex: 0.4,
@@ -189,13 +212,11 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
   },
   display: {
-    backgroundColor: colors.surface,
     borderRadius: borderRadius.xlarge,
     padding: spacing.xxxl,
     minHeight: 140,
     justifyContent: 'flex-end',
     borderWidth: 1,
-    borderColor: colors.border,
     ...shadows.large,
   },
   expression: {
@@ -209,7 +230,6 @@ const styles = StyleSheet.create({
     ...typography.heading,
     fontSize: 28,
     textAlign: 'right',
-    color: colors.textSecondary,
     minHeight: 40,
   },
   buttonsContainer: {
