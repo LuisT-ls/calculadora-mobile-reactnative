@@ -1,165 +1,164 @@
+import { ViewStyle, Platform } from 'react-native';
+
 /**
- * Temas de cores para light mode e dark mode
+ * Interface completa do tema com todas as propriedades necessárias
  */
+export interface Theme {
+  // Fundos
+  backgroundPrimary: string;
+  backgroundSecondary: string;
+  
+  // Botões
+  buttonPrimary: string;
+  buttonSecondary: string;
+  operatorButton: string;
+  
+  // Textos
+  textPrimary: string;
+  textSecondary: string;
+  
+  // Sombras
+  shadowLight: ViewStyle;
+  shadowDark: ViewStyle;
+  
+  // Propriedades legadas (para compatibilidade)
+  background: string;
+  surface: string;
+  text: string;
+  buttonNumber: string;
+  buttonOperator: string;
+  buttonAction: string;
+  buttonEquals: string;
+  buttonText: string;
+  buttonTextLight: string;
+}
 
 /**
  * Tema claro (Light Mode) - Neumorphism Light + Fluent Design
  */
-export const lightTheme = {
-  // Cores primárias
-  primary: '#007AFF',
-  primaryDark: '#0051D5',
-  primaryLight: '#5AC8FA',
+export const lightTheme: Theme = {
+  // Fundos principais
+  backgroundPrimary: '#F5F5F7',
+  backgroundSecondary: '#FFFFFF',
   
-  // Cores secundárias
-  secondary: '#5856D6',
-  secondaryDark: '#3634A3',
-  secondaryLight: '#AF52DE',
+  // Botões
+  buttonPrimary: '#FFFFFF',
+  buttonSecondary: '#E8E8ED',
+  operatorButton: '#FF9500',
   
-  // Cores de fundo (Neumorphism Light)
-  background: '#E5E5EA',
-  backgroundLight: '#F2F2F7',
-  backgroundDark: '#D1D1D6',
-  surface: '#FFFFFF',
-  surfaceLight: '#FFFFFF',
-  surfaceDark: '#F2F2F7',
-  
-  // Cores de texto
-  text: '#000000',
+  // Textos
+  textPrimary: '#000000',
   textSecondary: '#6D6D70',
-  textTertiary: '#AEAEB2',
-  textLight: '#FFFFFF',
-  textDark: '#000000',
   
-  // Cores de estado
-  success: '#34C759',
-  warning: '#FF9500',
-  error: '#FF3B30',
-  info: '#007AFF',
+  // Sombras
+  shadowLight: {
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+      },
+    }),
+  },
+  shadowDark: {
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 4,
+      },
+      web: {
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.12)',
+      },
+    }),
+  },
   
-  // Cores de borda
-  border: '#E5E5EA',
-  borderLight: '#F2F2F7',
-  borderDark: '#C7C7CC',
-  
-  // Cores de botão da calculadora (Light Mode - Neumorphism)
-  // Números: branco com sombra suave
+  // Propriedades legadas
+  background: '#F5F5F7',
+  surface: '#FFFFFF',
+  text: '#000000',
   buttonNumber: '#FFFFFF',
-  buttonNumberPressed: '#F2F2F7',
-  // Operadores: laranja vibrante
   buttonOperator: '#FF9500',
-  buttonOperatorPressed: '#FFB340',
-  // Ações: cinza claro
-  buttonAction: '#D1D1D6',
-  buttonActionPressed: '#C7C7CC',
-  // Igual: laranja vibrante
+  buttonAction: '#E8E8ED',
   buttonEquals: '#FF9500',
-  buttonEqualsPressed: '#FFB340',
-  // Texto dos botões
   buttonText: '#000000',
   buttonTextLight: '#FFFFFF',
-  buttonTextDark: '#000000',
-} as const;
+};
 
 /**
- * Tema escuro (Dark Mode) - Apple Calculator inspired
+ * Tema escuro (Dark Mode) - Moderno e Profissional
+ * Tons profundos com botões glass-like e sombras invertidas
  */
-export const darkTheme = {
-  // Cores primárias
-  primary: '#007AFF',
-  primaryDark: '#0051D5',
-  primaryLight: '#5AC8FA',
+export const darkTheme: Theme = {
+  // Fundos principais - tons profundos e elegantes
+  backgroundPrimary: '#0D0D0D',
+  backgroundSecondary: '#1A1A1A',
   
-  // Cores secundárias
-  secondary: '#5856D6',
-  secondaryDark: '#3634A3',
-  secondaryLight: '#AF52DE',
+  // Botões - efeito glass-like com brilho leve
+  buttonPrimary: 'rgba(34, 34, 34, 0.95)', // #222 com transparência sutil
+  buttonSecondary: 'rgba(50, 50, 50, 0.95)', // Tom mais claro para ações
+  operatorButton: '#FF9500',
   
-  // Cores de fundo (Apple Dark)
-  background: '#000000',
-  backgroundLight: '#1C1C1E',
-  backgroundDark: '#000000',
-  surface: '#1C1C1E',
-  surfaceLight: '#2C2C2E',
-  surfaceDark: '#000000',
-  
-  // Cores de texto
-  text: '#FFFFFF',
+  // Textos - branco suave
+  textPrimary: '#F1F1F1',
   textSecondary: '#AEAEB2',
-  textTertiary: '#636366',
-  textLight: '#FFFFFF',
-  textDark: '#1C1C1E',
   
-  // Cores de estado
-  success: '#34C759',
-  warning: '#FF9500',
-  error: '#FF3B30',
-  info: '#007AFF',
+  // Sombras - invertidas para efeito glass-like
+  shadowLight: {
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(255, 255, 255, 0.05)',
+      },
+    }),
+  },
+  shadowDark: {
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+      web: {
+        boxShadow: 'inset 0 4px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(255, 255, 255, 0.05)',
+      },
+    }),
+  },
   
-  // Cores de borda
-  border: '#38383A',
-  borderLight: '#48484A',
-  borderDark: '#1C1C1E',
-  
-  // Cores de botão da calculadora (Dark Mode - Apple Calculator)
-  // Números: cinza escuro elegante
-  buttonNumber: '#2C2C2E',
-  buttonNumberPressed: '#3A3A3C',
-  // Operadores: laranja vibrante
+  // Propriedades legadas
+  background: '#0D0D0D',
+  surface: '#1A1A1A',
+  text: '#F1F1F1',
+  buttonNumber: 'rgba(34, 34, 34, 0.95)',
   buttonOperator: '#FF9500',
-  buttonOperatorPressed: '#FFB340',
-  // Ações: cinza médio
-  buttonAction: '#48484A',
-  buttonActionPressed: '#5E5E62',
-  // Igual: laranja vibrante
+  buttonAction: 'rgba(50, 50, 50, 0.95)',
   buttonEquals: '#FF9500',
-  buttonEqualsPressed: '#FFB340',
-  // Texto dos botões
-  buttonText: '#FFFFFF',
+  buttonText: '#F1F1F1',
   buttonTextLight: '#FFFFFF',
-  buttonTextDark: '#1C1C1E',
-} as const;
-
-/**
- * Interface do tema
- */
-export interface Theme {
-  primary: string;
-  primaryDark: string;
-  primaryLight: string;
-  secondary: string;
-  secondaryDark: string;
-  secondaryLight: string;
-  background: string;
-  backgroundLight: string;
-  backgroundDark: string;
-  surface: string;
-  surfaceLight: string;
-  surfaceDark: string;
-  text: string;
-  textSecondary: string;
-  textTertiary: string;
-  textLight: string;
-  textDark: string;
-  success: string;
-  warning: string;
-  error: string;
-  info: string;
-  border: string;
-  borderLight: string;
-  borderDark: string;
-  buttonNumber: string;
-  buttonNumberPressed: string;
-  buttonOperator: string;
-  buttonOperatorPressed: string;
-  buttonAction: string;
-  buttonActionPressed: string;
-  buttonEquals: string;
-  buttonEqualsPressed: string;
-  buttonText: string;
-  buttonTextLight: string;
-  buttonTextDark: string;
-}
+};
 
 /**
  * Retorna o tema baseado no esquema de cores do sistema
@@ -169,8 +168,5 @@ export interface Theme {
  * @returns Tema correspondente (padrão: dark)
  */
 export const getTheme = (colorScheme: 'light' | 'dark' | null | undefined): Theme => {
-  // Se o sistema está em modo claro, usa lightTheme
-  // Caso contrário (dark, null ou undefined), usa darkTheme por padrão
   return colorScheme === 'light' ? lightTheme : darkTheme;
 };
-

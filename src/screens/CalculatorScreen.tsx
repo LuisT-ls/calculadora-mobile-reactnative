@@ -1,21 +1,20 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   SafeAreaView,
-  useColorScheme,
   Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import {
-  modernShadows,
   modernBorderRadius,
   modernSpacing,
   modernTypography,
   modernLayout,
 } from '../styles/modern';
-import { getTheme, type Theme } from '../styles/theme';
+import { useTheme } from '../contexts/ThemeContext';
+import { useThemeStyles } from '../hooks/useThemeStyles';
 import { ButtonCalc, ButtonType } from '../components/ButtonCalc';
 import { calculate, canAddOperator, formatNumber } from '../utils/calc';
 
@@ -23,11 +22,11 @@ import { calculate, canAddOperator, formatNumber } from '../utils/calc';
  * Tela principal da calculadora com design moderno e suporte a dark mode
  */
 export const CalculatorScreen: React.FC = () => {
-  // Detecta o esquema de cores do sistema
-  const colorScheme = useColorScheme();
+  // Obtém o tema e esquema de cores do contexto
+  const { theme, colorScheme } = useTheme();
   
-  // Obtém o tema baseado no esquema de cores (padrão: dark)
-  const theme = useMemo(() => getTheme(colorScheme), [colorScheme]);
+  // Obtém estilos dinâmicos baseados no tema
+  const themeStyles = useThemeStyles();
   
   // Determina o estilo da StatusBar (inverte: dark mode = light bar, light mode = dark bar)
   const statusBarStyle = colorScheme === 'light' ? 'dark' : 'light';
@@ -137,39 +136,35 @@ export const CalculatorScreen: React.FC = () => {
         onPress={onPress}
         type={type}
         flex={flex}
-        theme={theme}
       />
     );
   };
 
-  // Estilos dinâmicos baseados no tema
-  const dynamicStyles = useMemo(() => ({
-    container: {
-      backgroundColor: theme.background,
-    },
-    display: {
-      backgroundColor: theme.surface,
-    },
-    expression: {
-      color: theme.text,
-    },
-    result: {
-      color: theme.textSecondary,
-    },
-  }), [theme]);
+  // Estilo adicional para dark mode (glass-like effect no display)
+  const isDarkMode = theme.backgroundPrimary === '#0D0D0D';
+  const displayStyle = [
+    styles.display,
+    themeStyles.display,
+    Platform.select({
+      web: isDarkMode ? {
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(20px)',
+      } : {},
+    }),
+  ];
 
   return (
-    <SafeAreaView style={[styles.container, dynamicStyles.container]}>
+    <SafeAreaView style={[styles.container, themeStyles.container]}>
       <StatusBar style={statusBarStyle} />
       
       {/* Container principal com centralização para web */}
       <View style={styles.mainContainer}>
         {/* Display da calculadora */}
-        <View style={styles.displayContainer}>
-          <View style={[styles.display, dynamicStyles.display]}>
+        <View style={[styles.displayContainer, themeStyles.displayContainer]}>
+          <View style={displayStyle}>
             {/* Expressão completa digitada */}
             <Text
-              style={[styles.expression, dynamicStyles.expression]}
+              style={[styles.expression, themeStyles.expression]}
               numberOfLines={1}
               adjustsFontSizeToFit
               minimumFontScale={0.5}
@@ -179,7 +174,7 @@ export const CalculatorScreen: React.FC = () => {
             {/* Resultado calculado */}
             {result !== '' && (
               <Text
-                style={[styles.result, dynamicStyles.result]}
+                style={[styles.result, themeStyles.result]}
                 numberOfLines={1}
                 adjustsFontSizeToFit
                 minimumFontScale={0.5}
@@ -191,7 +186,7 @@ export const CalculatorScreen: React.FC = () => {
         </View>
 
         {/* Grade de botões */}
-        <View style={styles.buttonsContainer}>
+        <View style={[styles.buttonsContainer, themeStyles.buttonsContainer]}>
           {/* Linha 1: 7, 8, 9, ÷ */}
           <View style={styles.buttonRow}>
             {renderButton('7', () => handleNumber('7'))}
@@ -270,7 +265,6 @@ const styles = StyleSheet.create({
     paddingVertical: modernSpacing.xxxl,
     minHeight: modernLayout.displayMinHeight,
     justifyContent: 'flex-end',
-    ...modernShadows.large,
     ...Platform.select({
       web: {
         backdropFilter: 'blur(10px)',

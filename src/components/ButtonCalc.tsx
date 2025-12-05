@@ -8,8 +8,9 @@ import {
   Animated,
   Platform,
 } from 'react-native';
-import { modernShadows, modernBorderRadius, modernTypography, modernLayout, modernAnimations } from '../styles/modern';
-import type { Theme } from '../styles/theme';
+import { modernBorderRadius, modernTypography, modernLayout, modernAnimations } from '../styles/modern';
+import { useTheme } from '../contexts/ThemeContext';
+import { useThemeStyles } from '../hooks/useThemeStyles';
 
 /**
  * Tipos de botão da calculadora
@@ -24,7 +25,6 @@ interface ButtonCalcProps {
   onPress: () => void;
   type?: ButtonType;
   flex?: number;
-  theme: Theme;
 }
 
 /**
@@ -34,15 +34,17 @@ interface ButtonCalcProps {
  * @param onPress - Função chamada ao pressionar o botão
  * @param type - Tipo do botão (number, operator, action, equals)
  * @param flex - Valor flex para ajustar largura (padrão: 1)
- * @param theme - Tema atual (light ou dark)
  */
 export const ButtonCalc: React.FC<ButtonCalcProps> = ({
   label,
   onPress,
   type = 'number',
   flex = 1,
-  theme,
 }) => {
+  // Obtém o tema e estilos do contexto
+  const { theme } = useTheme();
+  const themeStyles = useThemeStyles();
+  
   // Animação de escala para feedback tátil
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
@@ -74,19 +76,15 @@ export const ButtonCalc: React.FC<ButtonCalcProps> = ({
    * Determina o estilo do botão baseado no tipo
    */
   const getButtonStyle = (): ViewStyle => {
-    const baseStyle: ViewStyle = {
-      backgroundColor: theme.buttonNumber,
-    };
-
     switch (type) {
       case 'operator':
-        return { ...baseStyle, backgroundColor: theme.buttonOperator };
+        return themeStyles.buttonOperator;
       case 'action':
-        return { ...baseStyle, backgroundColor: theme.buttonAction };
+        return themeStyles.buttonAction;
       case 'equals':
-        return { ...baseStyle, backgroundColor: theme.buttonEquals };
+        return themeStyles.buttonEquals;
       default:
-        return baseStyle;
+        return themeStyles.buttonNumber;
     }
   };
 
@@ -97,12 +95,27 @@ export const ButtonCalc: React.FC<ButtonCalcProps> = ({
     switch (type) {
       case 'operator':
       case 'equals':
-        return { color: theme.buttonTextLight };
+        return themeStyles.buttonTextLight;
       case 'action':
-        return { color: theme.buttonTextLight };
+        return themeStyles.buttonTextLight;
       default:
-        return { color: theme.buttonText };
+        return themeStyles.buttonText;
     }
+  };
+
+  // Estilo adicional para dark mode (glass-like effect)
+  const buttonStyle = getButtonStyle();
+  const isDarkMode = theme.backgroundPrimary === '#0D0D0D';
+  
+  const enhancedButtonStyle: ViewStyle = {
+    ...buttonStyle,
+    ...Platform.select({
+      web: isDarkMode ? {
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(10px)',
+        background: buttonStyle.backgroundColor,
+      } : {},
+    }),
   };
 
   return (
@@ -114,7 +127,7 @@ export const ButtonCalc: React.FC<ButtonCalcProps> = ({
       ]}
     >
       <TouchableOpacity
-        style={[styles.button, getButtonStyle()]}
+        style={[styles.button, enhancedButtonStyle]}
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
@@ -132,16 +145,16 @@ const styles = StyleSheet.create({
     marginVertical: modernLayout.buttonGap / 2,
   },
   button: {
-    borderRadius: modernBorderRadius.large,
     justifyContent: 'center',
     alignItems: 'center',
     height: modernLayout.buttonHeight,
-    ...modernShadows.medium,
     ...Platform.select({
       web: {
         cursor: 'pointer',
         userSelect: 'none',
         transition: 'all 0.2s ease',
+        // Efeito glass-like para dark mode na web
+        border: '1px solid transparent',
       },
     }),
   },
